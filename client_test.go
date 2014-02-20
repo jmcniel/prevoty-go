@@ -2,7 +2,6 @@ package prevoty
 
 import (
 	"fmt"
-	"github.com/prevoty/prevoty-go"
 	"testing"
 )
 
@@ -20,16 +19,16 @@ func TestPrevoty(t *testing.T) {
 		info, infoErr := client.Info()
 		if infoErr == nil {
 			fmt.Println("Information:", info.Message)
-			// Verify rule
-			verification, verifyErr := client.VerifyConfigurationKey(ruleKey)
+			// Verify configuration
+			verification, verifyErr := client.VerifyConfigurationKey(configurationKey)
 			fmt.Println("Verified rule:", verification, verifyErr)
 			// Filter XSS
-			result, filterErr := client.Filter(input, ruleKey)
+			result, filterErr := client.Filter(input, configurationKey)
 			fmt.Println("Filtered output:", result.Output, filterErr)
 		} else {
-			fmt.Println("Could not get information")
+			t.Error("Could not get information")
 		}
 	} else {
-		fmt.Println("API key not verified", verifiedErr)
+		t.Error("API key not verified", verifiedErr)
 	}
 }
