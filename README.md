@@ -16,7 +16,7 @@ To get started:
 
 2) Pull a copy or .zip/.tar of the `examples` directory
 
-3) Edit `client_test.go` - you will want to put in your API key and rule key
+3) Edit `client_test.go` - you will want to put in your API and configuration keys
 
 4) Run `go test`
 
