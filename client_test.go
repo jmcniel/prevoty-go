@@ -15,6 +15,9 @@ func TestPrevoty(t *testing.T) {
 	trustedTokenAction := "example_action"
 	trustedTokenTTL := "1000"
 
+	trustedQueryConfiguration := "configuration key goes here"
+	trustedQueryPayload := "SELECT * FROM Commitments"
+
 	client := NewPrevotyClient(apiKey)
 
 	// Verify the API key
@@ -47,6 +50,26 @@ func TestPrevoty(t *testing.T) {
 				} else {
 					fmt.Println("Validated token:", generatedToken.Token)
 				}
+			}
+
+			// Trusted Query
+			tq, queryErr := client.AnalyzeQuery(trustedQueryPayload, trustedQueryConfiguration)
+			if queryErr != nil {
+				t.Error("Trusted Query error:", queryErr)
+			} else {
+				if !tq.ValidQuery {
+					t.Error("Invalid query error")
+				}
+				if len(tq.StatementViolations) != 1 {
+					t.Error("Statement violations error")
+				}
+				if len(tq.FieldViolations) != 1 {
+					t.Error("Field violations error")
+				}
+				if len(tq.FunctionViolations) != 0 {
+					t.Error("Function violations error")
+				}
+				fmt.Println("Trusted Query result:", tq)
 			}
 		} else {
 			t.Error("Could not get information")
