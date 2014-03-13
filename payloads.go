@@ -23,3 +23,13 @@ type TrustedContentStatistics struct {
 	TagsBalanced         int `json:"tags_balanced"`
 	Transformations      int `json:"transformations"`
 }
+
+type TrustedTokenGenerationResult struct {
+	Token   string `json:"token"`
+	Message string `json:"message"`
+}
+
+type TrustedTokenValidationResult struct {
+	Valid   bool   `json:"valid"`
+	Message string `json:"message"`
+}
