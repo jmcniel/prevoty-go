@@ -171,3 +171,31 @@ func (self *PrevotyClient) ValidateTimedToken(action string, userIdentifier stri
 	}
 	return result, err
 }
+
+func (self *PrevotyClient) AnalyzeQuery(query string, configKey string) (*TrustedQueryResult, error) {
+	parseUrl := fmt.Sprintf("%s/query/parse", self.Base)
+	response, err := http.PostForm(parseUrl, url.Values{"api_key": {self.ApiKey}, "query": {query}, "config_key": {configKey}})
+	result := new(TrustedQueryResult)
+	if err == nil {
+		defer response.Body.Close()
+		switch response.StatusCode {
+		case 200:
+			body, ioErr := ioutil.ReadAll(response.Body)
+			if ioErr != nil {
+				return result, ioErr
+			}
+			decodingErr := json.Unmarshal(body, &result)
+			if decodingErr != nil {
+				return result, decodingErr
+			}
+			return result, nil
+		case 400:
+			return result, &BadInputParameter{}
+		case 403:
+			return result, &BadAPIKey{}
+		case 500:
+			return result, &InternalError{}
+		}
+	}
+	return result, err
+}
