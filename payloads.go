@@ -1,5 +1,7 @@
 package prevoty
 
+import "time"
+
 type KeyInformation struct {
 	Maximum   int    `json:"maximum"`
 	Used      int    `json:"used"`
@@ -62,4 +64,76 @@ type TrustedQueryFunctionCall struct {
 type TrustedQueryStatementViolation struct {
 	Type  string                   `json:"type"`
 	Table TrustedQuerySchemaObject `json:"table"`
+}
+
+type LinkAnalysisResult struct {
+	Analysis LinkAnalysis `json:"analysis"`
+	Message  string       `json:"message"`
+}
+
+type LinkAnalysis struct {
+	ScanId           string                      `json:"scan_id"`
+	CustomerId       uint                        `json:"customer_id"`
+	Url              string                      `json:"url"`
+	AnalysisCounters LinkAnalysisCounters        `json:"analysis_counters"`
+	ExpectedBaseline LinkAnalysisBaseline        `json:"expected_baseline"`
+	DeviationReport  LinkAnalysisDeviationReport `json:"deviation_report"`
+	Screenshots      []LinkAnalysisScreenshot    `json:"screenshots"`
+	BrowserEvents    LinkAnalysisBrowserEvents   `json:"browser_events"`
+	DnsRecords       LinkAnalysisDnsRecords      `json:"dns_records"`
+	HtmlDocument     LinkAnalysisHtmlDocument    `json:"html_document"`
+	Created          time.Time                   `json:"created"`
+}
+
+type LinkAnalysisCounters struct {
+	JavaScriptRedirects    uint `json:"javascript_redirects"`
+	ClientRedirects        uint `json:"client_redirects"`
+	ServerRedirects        uint `json:"server_redirects"`
+	Popups                 uint `json:"popups"`
+	Downloads              uint `json:"downloads"`
+	HtmlDocumentViolations uint `json:"html_document_violations"`
+	DnsRecordViolations    uint `json:"dns_record_violations"`
+}
+
+type LinkAnalysisBaseline struct {
+	BrowserEvents LinkAnalysisBrowserEvents `json:"browser_events"`
+	DnsRecords    LinkAnalysisDnsRecords    `json:"dns_records"`
+	HtmlDocument  LinkAnalysisHtmlDocument  `json:"html_document"`
+}
+
+type LinkAnalysisBrowserEvents []LinkAnalysisBrowserEvent
+
+type LinkAnalysisBrowserEvent struct {
+	TabId      int       `json:"tab_id"`
+	EventName  string    `json:"event_name"`
+	EventValue string    `json:"event_value"`
+	Timestamp  time.Time `json:"timestamp"`
+	MimeType   string    `json:"mime_type"`
+}
+
+type LinkAnalysisDeviation struct {
+	Property string `json:"property"`
+	Expected string `json:"expected"`
+	Actual   string `json:"actual"`
+}
+
+type LinkAnalysisDeviationReport struct {
+	HtmlDocumentChanged []LinkAnalysisDeviation `json:"html_document_changed"`
+	HtmlDocumentRemoved []LinkAnalysisDeviation `json:"html_document_removed"`
+	DnsRecordsRemoved   []LinkAnalysisDeviation `json:"dns_records_removed"`
+	DnsRecordsAdded     []LinkAnalysisDeviation `json:"dns_records_added"`
+	NewBrowserEvents    []LinkAnalysisDeviation `json:"new_browser_events"`
+	FailedBrowserEvents []LinkAnalysisDeviation `json:"failed_browser_events"`
+}
+
+type LinkAnalysisDnsRecords map[string][]string
+
+type LinkAnalysisHtmlDocument struct {
+	Title    string            `json:"title"`
+	MetaTags map[string]string `json:"meta_tags"`
+}
+
+type LinkAnalysisScreenshot struct {
+	TabId         int    `json:"tab_id"`
+	ScreenshotUrl string `json:"screenshot_url"`
 }

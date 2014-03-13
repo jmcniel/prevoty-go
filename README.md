@@ -14,11 +14,9 @@ To get started:
 
 1) Install the library `go get github.com/prevoty/prevoty-go`
 
-2) Pull a copy or .zip/.tar of the `examples` directory
+2) Edit `client_test.go` - you will want to put in your API and configuration keys
 
-3) Edit `client_test.go` - you will want to put in your API and configuration keys
-
-4) Run `go test`
+3) Run `go test`
 
 ## Issues
 

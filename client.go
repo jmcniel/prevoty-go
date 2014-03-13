@@ -118,6 +118,32 @@ func (self *PrevotyClient) FilterContent(input string, configurationKey string) 
 	return result, err
 }
 
+func (self *PrevotyClient) AnalyzeLink(url string) (*LinkAnalysisResult, error) {
+	analysisUrl := fmt.Sprintf("%s/url/results?api_key=%s&url=%s", self.Base, self.ApiKey, url)
+	response, err := http.Get(analysisUrl)
+	result := new(LinkAnalysisResult)
+	if err == nil {
+		defer response.Body.Close()
+		switch response.StatusCode {
+		case 200:
+			body, ioErr := ioutil.ReadAll(response.Body)
+			if ioErr != nil {
+				return result, ioErr
+			}
+			decodingErr := json.Unmarshal(body, &result)
+			if decodingErr != nil {
+				return result, decodingErr
+			}
+			return result, nil
+		case 403:
+			return result, &BadAPIKey{}
+		case 500:
+			return result, &InternalError{}
+		}
+	}
+	return result, err
+}
+
 func (self *PrevotyClient) GenerateTimedToken(action string, userIdentifier string, ttl string) (*TrustedTokenGenerationResult, error) {
 	generateUrl := fmt.Sprintf("%s/token/timed/generate?api_key=%s&action=%s&user_identifier=%s&ttl=%s", self.Base, self.ApiKey, action, userIdentifier, ttl)
 	response, err := http.Get(generateUrl)

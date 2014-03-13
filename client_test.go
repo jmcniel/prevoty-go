@@ -18,6 +18,8 @@ func TestPrevoty(t *testing.T) {
 	trustedQueryConfiguration := "configuration key goes here"
 	trustedQueryPayload := "SELECT * FROM Commitments"
 
+	link := "http://google.com"
+
 	client := NewPrevotyClient(apiKey)
 
 	// Verify the API key
@@ -70,6 +72,14 @@ func TestPrevoty(t *testing.T) {
 					t.Error("Function violations error")
 				}
 				fmt.Println("Trusted Query result:", tq)
+			}
+
+			// Link Analysis
+			la, linkErr := client.AnalyzeLink(link)
+			if linkErr != nil {
+				t.Error("Link Analysis error:", linkErr)
+			} else {
+				fmt.Println("Link Analysis result:", la)
 			}
 		} else {
 			t.Error("Could not get information")
