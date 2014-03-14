@@ -36,6 +36,11 @@ type TrustedTokenValidationResult struct {
 	Message string `json:"message"`
 }
 
+type TrustedTokenDeletionResult struct {
+	Deleted bool   `json:"deleted"`
+	Message string `json:"message"`
+}
+
 type TrustedQueryResult struct {
 	Error               error                            `json:"error,omitempty"`
 	ValidQuery          bool                             `json:"valid_query"`

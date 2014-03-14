@@ -198,6 +198,33 @@ func (self *PrevotyClient) ValidateTimedToken(action string, userIdentifier stri
 	return result, err
 }
 
+func (self *PrevotyClient) DeleteTimedToken(action string, userIdentifier string, token string) (*TrustedTokenDeletionResult, error) {
+	deleteUrl := fmt.Sprintf("%s/token/timed/delete?api_key=%s&action=%s&user_identifier=%s&token=%s", self.Base, self.ApiKey, action, userIdentifier, token)
+	response, err := http.Get(deleteUrl)
+	result := new(TrustedTokenDeletionResult)
+	if err == nil {
+		defer response.Body.Close()
+		switch response.StatusCode {
+		case 200:
+			body, ioErr := ioutil.ReadAll(response.Body)
+			if ioErr != nil {
+				return result, nil
+			}
+			decodingErr := json.Unmarshal(body, &result)
+			if decodingErr != nil {
+				return result, nil
+			}
+		case 400:
+			return result, &BadInputParameter{}
+		case 403:
+			return result, &BadAPIKey{}
+		case 500:
+			return result, &InternalError{}
+		}
+	}
+	return result, err
+}
+
 func (self *PrevotyClient) AnalyzeQuery(query string, configKey string) (*TrustedQueryResult, error) {
 	parseUrl := fmt.Sprintf("%s/query/parse", self.Base)
 	response, err := http.PostForm(parseUrl, url.Values{"api_key": {self.ApiKey}, "query": {query}, "config_key": {configKey}})
