@@ -81,6 +81,28 @@ func TestTrustedTokenDeletion(t *testing.T) {
 
 func TestTrustedQuery(t *testing.T) {
 	client := NewPrevotyClient(apiKey)
+	tq, queryErr := client.AnalyzeQuery(trustedQueryPayload, trustedQueryConfiguration)
+	if queryErr != nil {
+		t.Error("Trusted Query error:", queryErr)
+	} else {
+		if !tq.ValidQuery {
+			t.Error("Invalid query error")
+		}
+		if len(tq.StatementViolations) != 1 {
+			t.Error("Statement violations error")
+		}
+		if len(tq.FieldViolations) != 1 {
+			t.Error("Field violations error")
+		}
+		if len(tq.FunctionViolations) != 0 {
+			t.Error("Function violations error")
+		}
+		fmt.Println("Trusted Query result:", tq)
+	}
+}
+
+func TestLinkAnalysis(t *testing.T) {
+	client := NewPrevotyClient(apiKey)
 	la, linkErr := client.AnalyzeLink(link)
 	if linkErr != nil {
 		t.Error("Link Analysis error:", linkErr)
